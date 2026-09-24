@@ -1,5 +1,23 @@
 let pyodidePromise;
+let runtimeCacheUrls = [];
 const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/";
+
+window.quizRuntime = {
+  async configure(options = {}) {
+    runtimeCacheUrls = options.cache || [];
+  },
+  async prepare(onState = () => {}) {
+    if (!runtimeCacheUrls.length) return;
+    onState("Preparing the Python environment...");
+    const cacheResult = await cacheUrls(runtimeCacheUrls);
+    if (cacheResult.failed) {
+      throw new Error("Some Python runtime files could not be cached.");
+    }
+  },
+  runCode(code, input) {
+    return runPythonCode(code, input);
+  },
+};
 
 function loadPython() {
   if (pyodidePromise) return pyodidePromise;
@@ -42,25 +60,14 @@ function installCacheFirstFetch() {
   window.__syntropicaCacheFirstFetch = true;
 }
 
-async function runPythonCode(code, input, onState = () => {}) {
-  onState("loading");
+async function runPythonCode(code, input) {
   const py = await loadPython();
   const lines = input.replace(/\r\n?/g, "\n").split("\n");
   let cursor = 0;
   let output = "";
-  py.setStdout({
-    batched: (value) => {
-      output += `${value}\n`;
-    },
-  });
-  py.setStderr({
-    batched: (value) => {
-      output += `${value}\n`;
-    },
-  });
-  py.globals.set("_read_line", () =>
-    cursor < lines.length ? lines[cursor++] : "",
-  );
+  py.setStdout({ batched: (value) => { output += `${value}\n`; } });
+  py.setStderr({ batched: (value) => { output += `${value}\n`; } });
+  py.globals.set("_read_line", () => cursor < lines.length ? lines[cursor++] : "");
   py.runPython("import builtins\nbuiltins.input = _read_line");
   await py.runPythonAsync(code);
   return output.trimEnd() || "(no output)";
