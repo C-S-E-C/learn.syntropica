@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#090b0a" />
+    <title>Syntropica Studio · Learn to Code</title>
+    <script src="js/theme.js"></script>
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/toc.css" />
+  </head>
+  <body>
+    <main class="wrap">
+      <header class="top">
+        <a class="brand" href="index.html"
+          >Syntropica Studio<small>LEARN.SYNTROPICA.TOP</small></a
+        ><button
+          id="theme"
+          type="button"
+          aria-label="Toggle theme"
+          title="Toggle theme"
+        >
+          ☾
+        </button>
+      </header>
+      <section class="hero">
+        <div class="eyebrow">Syntropica Learn</div>
+        <h1>Start learning to code.</h1>
+        <p>Open courses and practice for everyone. Free to use, no sign-in required.</p>
+      </section>
+      <section class="catalog" aria-label="Course catalog">
+        <div class="catalog-tools">
+          <label class="sr-only" for="course-search">Search courses</label>
+          <input id="course-search" type="search" placeholder="Search courses" autocomplete="off" />
+          <label class="sr-only" for="language-filter">Filter by language</label>
+          <select id="language-filter">
+            <option value="">All languages</option>
+          </select>
+        </div>
+        <p id="catalog-count" class="catalog-count"></p>
+      </section>
+      <section id="toc" class="toc" aria-label="Course catalog">
+        <p class="status">Loading catalog...</p>
+      </section>
+      <footer class="footer" onclick="window.location.href='https://syntropica.top'">Syntropica Studio</footer>
+    </main>
+    <script src="js/toc.js" defer></script>
+  </body>
+</html>

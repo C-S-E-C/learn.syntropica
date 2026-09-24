@@ -1,0 +1,21 @@
+{
+  "name": "Test course",
+  "chapters": [
+    {
+      "id": "chapter-1",
+      "name": "Test chapter",
+      "quizes": [
+        {
+          "id": "print",
+          "name": "print 'Hello, world!'",
+          "desk": "print 'Hello, world!'",
+          "starterCode": "",
+          "IOSamples": [["", "Hello, world!"]],
+          "testNodes": [
+            ["", "Hello, world!"]
+          ]
+        }
+      ]
+    }
+  ]
+}

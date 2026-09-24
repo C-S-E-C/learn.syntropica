@@ -1,0 +1,9 @@
+{
+  "languages": [
+    {
+      "id": "py",
+      "name": "Python",
+      "courses": ["py/L1.json"]
+    }
+  ]
+}
