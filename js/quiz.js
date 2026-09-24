@@ -10,6 +10,7 @@ const escapeHtml = (value) =>
         character
       ],
   );
+let runtimeCacheUrls = [];
 
 async function initQuiz() {
   try {
@@ -19,9 +20,14 @@ async function initQuiz() {
     const manifest = await manifestResponse.json();
     const entry = (manifest.languages || []).find((item) => item.id === lang);
     if (!entry) throw new Error("Programming language not found.");
+    runtimeCacheUrls = entry.cache || [];
     const langreq = document.createElement("script");
     langreq.src = `js/quiz${entry.id}.js`;
-    document.body.appendChild(langreq);
+    await new Promise((resolve, reject) => {
+      langreq.onload = resolve;
+      langreq.onerror = () => reject(new Error("The language runtime could not be loaded."));
+      document.body.appendChild(langreq);
+    });
     let found = null;
     for (const file of entry.courses || []) {
       const response = await fetch(`data/${file}`);
@@ -60,7 +66,7 @@ function renderQuiz(item) {
   document.title = `${quiz.name || "Coding exercise"} · Syntropica Studio`;
   document.querySelector("#crumb-title").textContent = quiz.name || "Exercise";
   const samples = quiz.IOSamples || [];
-  container.innerHTML = `<div class="layout"><section><div class="chapter">${escapeHtml(item.chapterName)} · ${escapeHtml(item.language)}</div><h1>${escapeHtml(quiz.name || "Untitled exercise")}</h1><p class="description">${escapeHtml(quiz.desk || "")}</p><div class="panel-title">Input / output examples</div>${samples.length ? samples.map(([input, output]) => `<div class="sample"><div><label>Input</label>${escapeHtml(input)}</div><div><label>Output</label>${escapeHtml(output)}</div></div>`).join("") : '<p class="description">No examples available.</p>'}</section><section><div class="editor-head"><strong>Write code</strong><span class="language">${escapeHtml(item.language)}</span></div><textarea id="code" spellcheck="false" aria-label="Code editor"></textarea><div class="panel-title">Standard input</div><textarea id="input" spellcheck="false" aria-label="Standard input"></textarea><button class="run" id="run" type="button">Run code</button><div class="output"><div class="output-title">Output</div><div id="result">Your output will appear here.</div></div></section></div>`;
+  container.innerHTML = `<div class="layout"><section><div class="chapter">${escapeHtml(item.chapterName)} · ${escapeHtml(item.language)}</div><h1>${escapeHtml(quiz.name || "Untitled exercise")}</h1><p class="description">${escapeHtml(quiz.desk || "")}</p><div class="panel-title">Input / output examples</div>${samples.length ? samples.map(([input, output]) => `<div class="sample"><div><label>Input</label>${escapeHtml(input)}</div><div><label>Output</label>${escapeHtml(output)}</div></div>`).join("") : '<p class="description">No examples available.</p>'}</section><section><div class="editor-head"><strong>Write code</strong><span class="language">${escapeHtml(item.language)}</span></div><textarea id="code" spellcheck="false" aria-label="Code editor"></textarea><div class="panel-title">Standard input</div><textarea id="input" spellcheck="false" aria-label="Standard input"></textarea><button class="run" id="run" type="button">Run code</button><div class="output"><div class="output-title">Output</div><div id="result">Python environment support provided by Pyodide.\nYour output will appear here.</div></div></section></div>`;
   document.querySelector("#code").value = quiz.starterCode || "";
   document.querySelector("#input").value = samples[0]?.[0] || "";
   document.querySelector("#run").addEventListener("click", runPython);
@@ -74,6 +80,11 @@ async function runPython() {
   result.className = "";
   result.textContent = "Starting the Python runtime...";
   try {
+    if (runtimeCacheUrls.length) {
+      result.textContent = "Preparing the Python environment...";
+      const cacheResult = await cacheUrls(runtimeCacheUrls);
+      if (cacheResult.failed) throw new Error("Some Python runtime files could not be cached.");
+    }
     result.textContent = await runPythonCode(
       document.querySelector("#code").value,
       document.querySelector("#input").value,

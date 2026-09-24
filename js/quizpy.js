@@ -1,20 +1,45 @@
 let pyodidePromise;
+const PYODIDE_INDEX_URL = "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/";
 
 function loadPython() {
   if (pyodidePromise) return pyodidePromise;
-  pyodidePromise = new Promise((resolve, reject) => {
+  pyodidePromise = (async () => {
+    installCacheFirstFetch();
     if (window.loadPyodide) {
-      resolve(window.loadPyodide());
-      return;
+      return window.loadPyodide({ indexURL: PYODIDE_INDEX_URL });
     }
+    const scriptUrl = `${PYODIDE_INDEX_URL}pyodide.js`;
+    const cachedScript = await caches.match(scriptUrl);
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js";
-    script.onload = () => resolve(window.loadPyodide());
-    script.onerror = () =>
-      reject(new Error("The Python runtime could not be loaded. Check your network connection."));
-    document.head.append(script);
-  });
+    script.crossOrigin = "anonymous";
+    if (cachedScript) {
+      const source = await cachedScript.text();
+      script.src = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
+    } else {
+      script.src = scriptUrl;
+    }
+    await new Promise((resolve, reject) => {
+      script.onload = resolve;
+      script.onerror = () => reject(new Error("The Python runtime could not be loaded. Check your network connection."));
+      document.head.append(script);
+    });
+    return window.loadPyodide({ indexURL: PYODIDE_INDEX_URL });
+  })();
   return pyodidePromise;
+}
+
+function installCacheFirstFetch() {
+  if (window.__syntropicaCacheFirstFetch) return;
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = async (input, init) => {
+    const request = new Request(input, init);
+    if (request.url.startsWith(PYODIDE_INDEX_URL) && request.method === "GET") {
+      const cached = await caches.match(request);
+      if (cached) return cached;
+    }
+    return originalFetch(request);
+  };
+  window.__syntropicaCacheFirstFetch = true;
 }
 
 async function runPythonCode(code, input, onState = () => {}) {

@@ -3,7 +3,15 @@
     {
       "id": "py",
       "name": "Python",
-      "courses": ["py/L1.json"]
+      "cache": [
+        "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js",
+        "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/python_stdlib.zip",
+        "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.asm.wasm",
+        "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide-lock.json",
+        "https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.asm.js"
+      ],"courses": [
+        "py/L1.json"
+      ]
     }
   ]
 }

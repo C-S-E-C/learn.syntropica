@@ -18,6 +18,15 @@
 .catalog-tools select {
   width: 180px;
 }
+.catalog-tools button {
+  min-height: 42px;
+  padding: 8px 14px;
+  white-space: nowrap;
+}
+.catalog-tools button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
 .catalog-count {
   min-height: 1.55em;
   margin: 10px 0 0;
@@ -32,6 +41,22 @@
   padding: 20px 0 8px;
   font-size: 21px;
   font-weight: 700;
+}
+.toc-language-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.cache-environment {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.cache-environment:disabled {
+  cursor: wait;
+  opacity: 0.65;
 }
 .toc-level {
   margin-left: 18px;

@@ -5,6 +5,8 @@ const count = document.querySelector("#catalog-count");
 const text = (value, fallback) =>
   typeof value === "string" && value.trim() ? value.trim() : fallback;
 let courses = [];
+let languages = new Map();
+const cacheButtons = new Map();
 
 async function loadToc() {
   try {
@@ -12,6 +14,7 @@ async function loadToc() {
     if (!response.ok) throw new Error();
     const manifest = await response.json();
     for (const language of manifest.languages || []) {
+      languages.set(language.id, language);
       const option = document.createElement("option");
       option.value = language.id;
       option.textContent = language.name || language.id;
@@ -60,6 +63,7 @@ function renderToc() {
   for (const course of visible) {
     if (!groups.has(course.languageId)) {
       groups.set(course.languageId, {
+        id: course.languageId,
         name: course.languageName,
         courses: [],
       });
@@ -70,7 +74,15 @@ function renderToc() {
   for (const groupData of groups.values()) {
     const languageSection = document.createElement("section");
     languageSection.className = "toc-language";
-    languageSection.textContent = groupData.name;
+    const languageHeader = document.createElement("div");
+    languageHeader.className = "toc-language-header";
+    const languageName = document.createElement("span");
+    languageName.textContent = groupData.name;
+    languageHeader.append(languageName);
+    const language = languages.get(groupData.id);
+    const cacheButton = createCacheButton(language);
+    languageHeader.append(cacheButton);
+    languageSection.append(languageHeader);
     const level = document.createElement("div");
     level.className = "toc-level";
 
@@ -120,6 +132,51 @@ function link(label, href, detail = "") {
   anchor.href = href;
   anchor.innerHTML = `<span>${label}${detail ? ` <small>${detail}</small>` : ""}</span><span class="toc-arrow">→</span>`;
   return anchor;
+}
+
+function createCacheButton(language) {
+  const button = document.createElement("button");
+  button.className = "cache-environment";
+  button.type = "button";
+  button.title = "Cache this language environment";
+  button.textContent = "Checking cache...";
+  cacheButtons.set(language.id, button);
+  updateCacheButton(button, language);
+  button.addEventListener("click", () => toggleLanguageCache(button, language));
+  return button;
+}
+
+async function updateCacheButton(button, language) {
+  if (!language.cache?.length) {
+    button.textContent = "No cache files";
+    button.disabled = true;
+    return;
+  }
+  const cached = await getCachedUrls(language.cache);
+  button.textContent = cached.length === language.cache.length ? "Delete cache" : "Cache environment";
+  button.title = cached.length === language.cache.length ? "Delete this language environment cache" : "Cache this language environment";
+}
+
+async function toggleLanguageCache(button, language) {
+  if (!language.cache?.length) return;
+  button.disabled = true;
+  const fullyCached = (await getCachedUrls(language.cache)).length === language.cache.length;
+  try {
+    if (fullyCached) {
+      button.textContent = "Deleting...";
+      await deleteCachedUrls(language.cache);
+    } else {
+      button.textContent = "Caching...";
+      const result = await cacheUrls(language.cache);
+      if (result.failed) throw new Error(`${result.failed} file${result.failed === 1 ? "" : "s"} failed`);
+    }
+  } catch (error) {
+    button.textContent = error.message || "Cache operation failed";
+    setTimeout(() => updateCacheButton(button, language), 1800);
+    return;
+  }
+  await updateCacheButton(button, language);
+  button.disabled = false;
 }
 
 search.addEventListener("input", renderToc);

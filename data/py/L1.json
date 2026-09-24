@@ -10,7 +10,7 @@
           "name": "print 'Hello, world!'",
           "desk": "print 'Hello, world!'",
           "starterCode": "",
-          "IOSamples": [["", "Hello, world!"]],
+          "IOSamples": [[" ", "Hello, world!"]],
           "testNodes": [
             ["", "Hello, world!"]
           ]

@@ -108,6 +108,68 @@ h1 {
   border: 0;
   border-top: 1px solid var(--line);
 }
+.lesson-toc {
+  margin: 0 0 28px;
+  padding: 14px 18px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--editor);
+}
+.lesson-toc strong {
+  display: block;
+  margin-bottom: 8px;
+}
+.lesson-toc ol {
+  margin: 0;
+  padding-left: 22px;
+}
+.lesson-toc li {
+  padding: 2px 0;
+}
+.lesson-toc .toc-level-3,
+.lesson-toc .toc-level-4,
+.lesson-toc .toc-level-5,
+.lesson-toc .toc-level-6 {
+  margin-left: 16px;
+}
+.lesson table {
+  width: 100%;
+  margin: 20px 0;
+  border-collapse: collapse;
+  overflow: hidden;
+}
+.lesson th,
+.lesson td {
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  text-align: left;
+}
+.lesson th {
+  background: var(--editor);
+  color: var(--text);
+}
+.lesson td {
+  color: var(--muted);
+}
+.lesson img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 18px 0;
+  border-radius: 6px;
+}
+.lesson .footnotes {
+  margin-top: 36px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.lesson .footnotes h2 {
+  margin-top: 0;
+  border: 0;
+}
+.lesson .footnotes ol {
+  margin-bottom: 0;
+}
 .lesson del {
   color: var(--muted);
 }
