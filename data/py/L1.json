@@ -1,18 +1,24 @@
 {
-  "name": "Test course",
+  "name": "Python Basics",
   "chapters": [
     {
       "id": "chapter-1",
-      "name": "Test chapter",
+      "name": "Input, Output and Strings",
       "quizes": [
         {
-          "id": "print",
-          "name": "print 'Hello, world!'",
-          "desk": "print 'Hello, world!'",
+          "id": "IO-1",
+          "name": "Greeting Your Party Guests",
+          "desk": "You would like to greet everyone who comes to your party. Write a program that asks for the names of the guests and prints out a greeting for each of them by saying 'Hello, [name]!'.",
           "starterCode": "",
-          "IOSamples": [[" ", "Hello, world!"]],
-          "testNodes": [
-            ["", "Hello, world!"]
+          "IOSamples": [
+            ["World", "Hello, World!"],
+            ["Tom", "Hello, Tom!"]
+          ],"testNodes": [
+            ["World", "Hello, World!"],
+            ["Tom", "Hello, Tom!"],
+            ["Alice", "Hello, Alice!"],
+            ["Bob", "Hello, Bob!"],
+            ["Charlie", "Hello, Charlie!"]
           ]
         }
       ]

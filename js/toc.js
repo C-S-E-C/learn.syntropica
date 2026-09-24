@@ -113,7 +113,7 @@ function renderToc() {
           group.append(
             link(
               text(quiz.name, `Exercise ${quizIndex + 1}`),
-              `quiz.html?lang=${encodeURIComponent(courseData.languageId)}&class=${encodeURIComponent(`${courseData.id}-${quizNumber}`)}`,
+              `quiz.html?lang=${encodeURIComponent(courseData.languageId)}&quiz=${encodeURIComponent(`${courseData.id}-${quizNumber}`)}`,
             ),
           );
         });

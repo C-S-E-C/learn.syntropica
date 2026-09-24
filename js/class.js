@@ -222,7 +222,13 @@ function inlineMarkdown(value) {
 }
 
 function safeUrl(value) {
-  const url = String(value).trim();
+  const url = String(value)
+    .trim()
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
   return /^(https?:|mailto:|#|\/|\.\/|\.\.\/)/i.test(url) ? escapeHtml(url) : "#";
 }
 function stripMarkdown(value) { return String(value).replace(/[`*_~]/g, "").replace(/\[([^\]]+)\]\([^)]+\)/g, "$1"); }
