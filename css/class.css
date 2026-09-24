@@ -27,6 +27,9 @@ h1 {
   color: var(--text);
   font-size: 16px;
 }
+.lesson a {
+  color: var(--accent-rev);
+}
 .lesson h2 {
   font-size: 22px;
   margin: 30px 0 10px;
@@ -48,7 +51,6 @@ h1 {
   font-size: 16px;
 }
 .lesson h6 {
-  color: var(--muted);
   font-size: 15px;
 }
 .lesson p {
